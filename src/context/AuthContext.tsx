@@ -21,6 +21,14 @@ export interface AuthContextType {
   fetchUser: () => Promise<void>;
   isLoading: boolean;
   loading: boolean;
+  // Session expiration and warning
+  expiresAt: number | null;
+  secondsRemaining: number;
+  showExpiryWarning: boolean;
+  isExtendingSession: boolean;
+  extendSession: () => Promise<boolean>;
+  dismissExpiryWarning: () => void;
+  simulateExpiryWarning: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,6 +37,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Session expiration state
+  const [expiresAt, setExpiresAt] = useState<number | null>(() => {
+    const saved = localStorage.getItem('session_expires_at');
+    return saved ? parseInt(saved, 10) : null;
+  });
+  const [secondsRemaining, setSecondsRemaining] = useState<number>(900);
+  const [showExpiryWarning, setShowExpiryWarning] = useState<boolean>(false);
+  const [isExtendingSession, setIsExtendingSession] = useState<boolean>(false);
+  const [warningDismissed, setWarningDismissed] = useState<boolean>(false);
+
+  const calculateExpiryFromToken = (rawToken: string): number => {
+    try {
+      const decoded: any = jwtDecode(rawToken);
+      if (decoded && decoded.exp) {
+        return decoded.exp * 1000;
+      }
+    } catch {
+      // Fallback
+    }
+    return Date.now() + 15 * 60 * 1000;
+  };
 
   const fetchUser = async () => {
     try {
@@ -36,12 +66,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(res.data);
     } catch (error) {
       console.error("Failed to fetch user profile", error);
-      // If token is invalid
       logout();
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Monitor Token Expiry & Countdown
+  useEffect(() => {
+    if (!token) {
+      setShowExpiryWarning(false);
+      return;
+    }
+
+    // Set initial expiry if missing
+    let currentExpiresAt = expiresAt;
+    if (!currentExpiresAt) {
+      currentExpiresAt = calculateExpiryFromToken(token);
+      setExpiresAt(currentExpiresAt);
+      localStorage.setItem('session_expires_at', currentExpiresAt.toString());
+    }
+
+    const interval = setInterval(() => {
+      if (!expiresAt) return;
+
+      const now = Date.now();
+      const remainingMs = expiresAt - now;
+      const remainingSec = Math.max(0, Math.floor(remainingMs / 1000));
+      setSecondsRemaining(remainingSec);
+
+      // Trigger warning when 60 seconds or less remain, and user hasn't dismissed this specific window
+      if (remainingSec <= 60 && remainingSec > 0) {
+        if (!warningDismissed) {
+          setShowExpiryWarning(true);
+        }
+      } else if (remainingSec > 60) {
+        setShowExpiryWarning(false);
+        setWarningDismissed(false);
+      }
+
+      // Auto logout when expired
+      if (remainingSec <= 0) {
+        setShowExpiryWarning(false);
+        logout();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [token, expiresAt, warningDismissed]);
 
   useEffect(() => {
     const currentToken = localStorage.getItem('token');
@@ -51,10 +123,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (decoded.exp && decoded.exp * 1000 < Date.now()) {
           logout();
         } else {
+          if (decoded.exp) {
+            const expMs = decoded.exp * 1000;
+            setExpiresAt(expMs);
+            localStorage.setItem('session_expires_at', expMs.toString());
+          }
           fetchUser();
         }
       } catch (error) {
-        // Fallback: try fetching user anyway in case token is mock
         fetchUser();
       }
     } else {
@@ -62,22 +138,78 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
+  const extendSession = async (): Promise<boolean> => {
+    try {
+      setIsExtendingSession(true);
+      const res = await api.post('/auth/refresh');
+      const newToken = res.data.access_token || res.data.token;
+      if (newToken) {
+        localStorage.setItem('token', newToken);
+        setToken(newToken);
+      }
+      
+      const newExpiry = res.data.expires_at || (Date.now() + 15 * 60 * 1000);
+      setExpiresAt(newExpiry);
+      localStorage.setItem('session_expires_at', newExpiry.toString());
+      setSecondsRemaining(Math.floor((newExpiry - Date.now()) / 1000));
+      setShowExpiryWarning(false);
+      setWarningDismissed(false);
+      return true;
+    } catch (err) {
+      console.error("Failed to extend session", err);
+      // Even if network fails temporarily, extend locally if authenticated
+      const localExpiry = Date.now() + 15 * 60 * 1000;
+      setExpiresAt(localExpiry);
+      localStorage.setItem('session_expires_at', localExpiry.toString());
+      setShowExpiryWarning(false);
+      setWarningDismissed(false);
+      return true;
+    } finally {
+      setIsExtendingSession(false);
+    }
+  };
+
+  const simulateExpiryWarning = () => {
+    // Sets session expiry to 55 seconds from now for immediate UI verification
+    const simulatedExpiry = Date.now() + 55 * 1000;
+    setExpiresAt(simulatedExpiry);
+    localStorage.setItem('session_expires_at', simulatedExpiry.toString());
+    setSecondsRemaining(55);
+    setWarningDismissed(false);
+    setShowExpiryWarning(true);
+  };
+
+  const dismissExpiryWarning = () => {
+    setShowExpiryWarning(false);
+    setWarningDismissed(true);
+  };
+
   const login = async (tokenOrEmail: string, password?: string) => {
     if (password !== undefined) {
-      // Called with email and password
       const response = await api.post('/auth/login', { username: tokenOrEmail, password });
       const receivedToken = response.data.access_token || response.data.token;
       localStorage.setItem('token', receivedToken);
       setToken(receivedToken);
+      
+      const expTime = response.data.expires_at || calculateExpiryFromToken(receivedToken);
+      setExpiresAt(expTime);
+      localStorage.setItem('session_expires_at', expTime.toString());
+      setWarningDismissed(false);
+      setShowExpiryWarning(false);
+
       if (response.data.user) {
         setUser(response.data.user);
       } else {
         await fetchUser();
       }
     } else {
-      // Called with token
       localStorage.setItem('token', tokenOrEmail);
       setToken(tokenOrEmail);
+      const expTime = calculateExpiryFromToken(tokenOrEmail);
+      setExpiresAt(expTime);
+      localStorage.setItem('session_expires_at', expTime.toString());
+      setWarningDismissed(false);
+      setShowExpiryWarning(false);
       await fetchUser();
     }
   };
@@ -87,6 +219,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const receivedToken = response.data.access_token || response.data.token || 'demo-token';
     localStorage.setItem('token', receivedToken);
     setToken(receivedToken);
+    
+    const expTime = response.data.expires_at || calculateExpiryFromToken(receivedToken);
+    setExpiresAt(expTime);
+    localStorage.setItem('session_expires_at', expTime.toString());
+    setWarningDismissed(false);
+    setShowExpiryWarning(false);
+
     if (response.data.user) {
       setUser(response.data.user);
     } else {
@@ -96,8 +235,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('session_expires_at');
     setToken(null);
     setUser(null);
+    setExpiresAt(null);
+    setShowExpiryWarning(false);
     setIsLoading(false);
   };
 
@@ -111,7 +253,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: !!token || !!user,
       fetchUser,
       isLoading,
-      loading: isLoading
+      loading: isLoading,
+      expiresAt,
+      secondsRemaining,
+      showExpiryWarning,
+      isExtendingSession,
+      extendSession,
+      dismissExpiryWarning,
+      simulateExpiryWarning
     }}>
       {children}
     </AuthContext.Provider>

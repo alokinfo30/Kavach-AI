@@ -313,6 +313,38 @@ VITE_ENVIRONMENT=development
 - Use load balancers for multiple instances
 - Implement CDN for static assets
 
+## Advanced Platform Features & Capabilities
+
+### 1. Real-Time Telemetry & Security Scan Duration Visualization (Recharts)
+- Live API response latency metrics (P50, P95, P99 percentile graphs).
+- Security scan duration and throughput tracking.
+- Interactive multi-metric chart with live jitter simulation, historical playback, and error rate telemetry.
+
+### 2. Global Command Palette & Keyboard Shortcuts Navigation
+Fast keyboard-driven workflows for enterprise security operations:
+- `Ctrl + K` / `Cmd + K`: Open Global Search & Command Engine
+- `Ctrl + D` / `Cmd + D`: Jump to Governance Overview Dashboard
+- `Alt + R` / `Ctrl + R`: Jump to Red Team Security Lab
+- `Ctrl + M` / `Cmd + M`: Jump to Model Drift Monitoring
+- `Ctrl + B` / `Cmd + B`: Jump to Knowledge Base & Graph
+- `Ctrl + P` / `Cmd + P`: Jump to Compliance Reports & Downloads
+- `?` or `Shift + /`: Open Keyboard Shortcuts Cheat Sheet
+
+### 3. Scheduled Scans (Recurring Security Audits)
+Automate continuous adversarial red teaming on AI models:
+- Configure custom recurrence frequencies: Hourly, Every 6 Hours, Daily at Midnight, Weekly on Sunday.
+- Automated score threshold alerts with instant incident notification triggers.
+- Toggle active/paused status and trigger immediate manual executions with "Run Now".
+
+### 4. Cross-Module Global Search Bar
+- Header search bar allowing real-time keyword filtering across Red Team test results, Model Drift metrics, Knowledge Base articles, and navigation endpoints.
+- Debounced live search with category pills and keyboard navigation.
+
+### 5. Multi-Format Audit Reports (Download CSV & Download PDF)
+- Executive Compliance & ISO/IEC 42001 / NIST AI RMF Summary: Download in structured CSV or formatted PDF.
+- Red Team Adversarial Attack Findings: Granular payload, severity, and remediation export.
+- Model Drift & Degradation Audit: Statistical baseline comparison and anomaly log export.
+
 ## Contributing
 
 1. Fork the repository

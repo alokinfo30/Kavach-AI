@@ -16,6 +16,7 @@ import Profile from './Profile';
 import TestComparison from './TestComparison';
 import AdminFeedback from './AdminFeedback';
 import Notifications from './Notifications';
+import ActivityLog from './ActivityLog';
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
                   <Route path="/monitoring" element={<Monitoring />} />
                   <Route path="/knowledge" element={<KnowledgeBase />} />
                   <Route path="/reports" element={<Reports />} />
+                  <Route path="/activity-log" element={<ActivityLog />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/notifications" element={<Notifications />} />
