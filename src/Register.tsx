@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from './lib/api';
+import { useAuth } from './context/AuthContext';
 import { cn } from './lib/utils';
 import { Shield } from 'lucide-react';
 
@@ -13,6 +13,7 @@ export default function Register() {
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,11 +26,15 @@ export default function Register() {
     setIsSubmitting(true);
 
     try {
-      await api.post('/auth/register', formData);
-      navigate('/login', { replace: true });
+      if (register) {
+        await register(formData.email, formData.password, formData.username, formData.company);
+        navigate('/dashboard', { replace: true });
+      } else {
+        navigate('/login', { replace: true });
+      }
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.error || 'Failed to register');
+      setError(err?.message || 'Failed to register');
     } finally {
       setIsSubmitting(false);
     }

@@ -27,6 +27,7 @@ import KeyboardShortcutsModal from './KeyboardShortcutsModal';
 import Breadcrumbs from './Breadcrumbs';
 import SessionExpiryToast from './SessionExpiryToast';
 import VoiceNavigation from './VoiceNavigation';
+import BackendHealthWidget from './BackendHealthWidget';
 import Tooltip from './Tooltip';
 import { subscribeToOnlineStatus, subscribeToInstallPrompt, promptPWAInstall } from '../lib/pwa';
 
@@ -352,6 +353,9 @@ function DashboardLayout() {
           </div>
 
           <div className="flex items-center space-x-3">
+            {/* Backend Status Indicator */}
+            <BackendHealthWidget />
+
             {/* Voice Navigation Button */}
             <VoiceNavigation
               onOpenSearch={() => setSearchOpen(true)}

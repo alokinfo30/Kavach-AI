@@ -22,12 +22,11 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const response = await api.post('/auth/login', { username, password });
-      login(response.data.access_token);
+      await login(username, password);
       navigate(from, { replace: true });
     } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.error || 'Failed to login. Please verify credentials.');
+      console.error('Login error:', err);
+      setError(err?.message || 'Failed to login. Please verify credentials.');
     } finally {
       setIsSubmitting(false);
     }
