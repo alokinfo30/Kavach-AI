@@ -15,7 +15,7 @@
 
 As enterprises rapidly deploy Large Language Models (LLMs) and Autonomous AI Agents into production, AI systems introduce severe new risk vectors:
 
-1. **Adversarial & Security Threats**: LLMs are vulnerable to *Prompt Injection*, *Jailbreaking*, *System Prompt Extraction*, and *Training Data / PII Leaks*. Without continuous red teaming, attackers can bypass safety guardrails or extract private corporate data.
+1. **Adversarial & Security Threats**: LLMs are vulnerable to *Prompt Injection*, *Jailbreaking*, *System Prompt Extraction*, and *Training Data / PII Leaks*. Without continuous red teaming and active guardrails, attackers can bypass safety rules or exfiltrate private corporate data.
 2. **Model Degradation & Silent Drift**: In production, input data distributions shift over time (*Data Drift*) and real-world relationships evolve (*Concept Drift*), causing hallucinations, inaccurate predictions, and silent system failures.
 3. **Strict Global AI Regulations**: Mandates such as the **EU AI Act**, **NIST AI Risk Management Framework (AI RMF 1.0)**, **ISO/IEC 42001**, and **OWASP LLM Top 10** require organizations to maintain auditable proof of safety testing, model inventories, risk tiering, and human oversight.
 
@@ -23,10 +23,30 @@ As enterprises rapidly deploy Large Language Models (LLMs) and Autonomous AI Age
 
 ---
 
+## 🛡️ Best Precautions & Mitigation Techniques Matrix
+
+Kavach-AI goes beyond detecting vulnerabilities by dynamically generating tailored **Precautions & Defense Playbooks** for each security finding and audit report:
+
+| Threat Vector | Recommended Precaution Technique | Category | Priority | Actionable Implementation Guide |
+|:---|:---|:---|:---|:---|
+| **Prompt Injection & Jailbreaks** | **Dual-LLM & Delimiter Sandwiching Guardrail** | Input Sanitization | `Immediate` | Wrap untrusted user inputs inside `<user_prompt>...</user_prompt>` XML tags and pass through an intent-classification guardrail model (Llama Guard / NeMo Guardrails) before execution. |
+| **Prompt Injection & Jailbreaks** | **Instruction Hierarchy Enforcement** | Architecture Hardening | `High` | Enforce architectural priority where system-level constitutional policies strictly override runtime user context. |
+| **Deepfakes & Synthetic Media** | **Cryptographic C2PA Watermarking** | Content Integrity | `Immediate` | Embed tamper-evident cryptographic provenance signatures (C2PA standard) into generated media at synthesis time. |
+| **Deepfakes & Synthetic Media** | **Multi-Modal Liveness Verification** | Access Control | `High` | Deploy interactive challenge-response protocols and 3D facial mesh checks to block synthetic identity spoofing. |
+| **Training Data Poisoning** | **Influence Function & Outlier Cleansing** | Data Governance | `Immediate` | Compute sample influence functions and Cook's distance across training batches to isolate and purge poisoned data points. |
+| **Training Data Poisoning** | **Cryptographic Data Lineage Checksums** | Supply Chain Security | `High` | Enforce SHA-256 content addressing and verified supplier signing on all external training corpora before ingestion. |
+| **Model Parameter Extraction** | **Projected Gradient Descent (PGD) Hardening** | Model Robustness | `Immediate` | Augment training batches with worst-case adversarial perturbations computed via multi-step PGD. |
+| **Model Parameter Extraction** | **Differential Privacy & Logit Vector Masking** | Extraction Defense | `High` | Mask full confidence logit vectors from public API endpoints and enforce strict query rate budgets. |
+| **PII Leakage & Hallucinations** | **Real-Time PII Scrubbing (Microsoft Presidio)** | Data Sanitization | `Immediate` | Intercept and redact Social Security numbers, API keys, passwords, and private tokens before model invocation. |
+| **Model Drift & Degradation** | **Continuous PSI Telemetry & Automated Retraining** | Continuous Auditing | `High` | Compute Population Stability Index (PSI) and trigger automated alerts/canary rollbacks when PSI exceeds 0.25. |
+
+---
+
 ## 🚀 Key Features
 
 ### 1. 🛡️ Adversarial AI Red Teaming & Attack Simulation
 - **Multi-Vector Threat Testing**: Stress-test models against Prompt Injection, Jailbreak Bypass, System Prompt Extraction, Hallucinations, Toxicity, and Training Data Leakage.
+- **Dynamic Precaution Engine**: Automatically pairs every vulnerability with prioritized remediation techniques and code playbooks.
 - **Side-by-Side Test Comparison Matrix (`/red-team/compare`)**: Compare test runs across different models, prompt iterations, and safety guardrails to evaluate regression risks.
 - **Automated Scheduled Audits**: Configure recurring automated security scans (Hourly, Daily, Weekly) with customizable alert thresholds.
 - **Granular Test Audit Reports**: Generate and download individual test run audit reports in PDF format.
@@ -50,7 +70,7 @@ As enterprises rapidly deploy Large Language Models (LLMs) and Autonomous AI Age
 - **Interactive Knowledge Graph**: Visual node-link topology mapping relationships between models, vulnerability surfaces, datasets, and compliance requirements.
 
 ### 5. 📑 Audit-Ready PDF & CSV Compliance Reports
-- **Executive & Technical Report Generation**: One-click generation of formal compliance audit reports using ReportLab.
+- **Executive & Technical Report Generation**: One-click generation of formal compliance audit reports using ReportLab with embedded precaution recommendations.
 - **Email Dispatch**: Direct dispatch of compliance summaries to security and legal teams.
 - **Report History Archive**: Complete repository of past audit reports with instant re-download.
 
@@ -161,9 +181,9 @@ docker run -p 8000:8000 --env-file .env kavach-ai
 - `POST /api/auth/refresh` — Refresh expired access token
 - `GET /api/auth/profile` — Fetch current user profile
 
-### Red Teaming & Testing
-- `POST /api/redteam/test` — Execute single adversarial test
-- `GET /api/redteam/history` — Retrieve test execution history
+### Red Teaming, Testing & Precautions
+- `POST /api/redteam/test` — Execute single adversarial test (returns vulnerabilities and recommended precaution techniques)
+- `GET /api/redteam/history` — Retrieve test execution history with precautions
 - `GET /api/redteam/scheduled` — List automated scheduled tests
 - `POST /api/redteam/schedule` — Create new scheduled recurring test
 - `POST /api/redteam/scheduled/<id>/run` — Trigger immediate test execution
@@ -180,7 +200,7 @@ docker run -p 8000:8000 --env-file .env kavach-ai
 
 ### Compliance & Reports
 - `GET /api/reports/list` — List generated compliance reports
-- `POST /api/reports/generate` — Generate new audit PDF report
+- `POST /api/reports/generate` — Generate new audit PDF report with mitigation playbooks
 - `GET /api/reports/<id>/download` — Download report PDF
 - `GET /health` — Diagnostic health check (PostgreSQL, MongoDB, Redis)
 
