@@ -97,16 +97,52 @@ def generate_test_report_pdf(test: AITest) -> bytes:
 
     p.setFont("Helvetica", 12)
     if test.results:
-        results = test.results
         p.drawString(50, y, f"Risk Level: {results.get('risk_level', 'N/A')}")
         y -= 20
         p.drawString(50, y, f"Overall Score: {results.get('overall_score', 0) * 100:.1f}%")
         y -= 20
         p.drawString(50, y, f"Tests Conducted: {results.get('tests_conducted', 0)}")
+        y -= 30
+
+        # Precautions & Mitigation Techniques
+        precautions = results.get("precautions", [])
+        if precautions:
+            p.setFont("Helvetica-Bold", 13)
+            p.drawString(50, y, "Recommended Precautions & Mitigation Techniques")
+            y -= 20
+            p.setFont("Helvetica", 10)
+            for prec in precautions:
+                if y < 80:
+                    p.showPage()
+                    y = height - 50
+                    p.setFont("Helvetica", 10)
+                p.setFont("Helvetica-Bold", 10)
+                p.drawString(50, y, f"• {prec.get('technique', '')} [{prec.get('priority', 'High')} Priority]")
+                y -= 15
+                p.setFont("Helvetica", 9)
+                desc = prec.get("description", "")
+                if len(desc) > 85:
+                    p.drawString(65, y, desc[:85])
+                    y -= 12
+                    p.drawString(65, y, desc[85:170])
+                else:
+                    p.drawString(65, y, desc)
+                y -= 18
         
-        # Vulnerabilities section omitted for brevity in this specific function view, 
-        # but would follow similar logic to the original code or use Platypus tables 
-        # for better formatting. For this refactor, we keep it simple.
+        # Vulnerabilities found
+        vulns = results.get("vulnerabilities_found", [])
+        if vulns and y > 100:
+            p.setFont("Helvetica-Bold", 13)
+            p.drawString(50, y, "Vulnerabilities Identified")
+            y -= 20
+            p.setFont("Helvetica", 10)
+            for v in vulns:
+                if y < 80:
+                    p.showPage()
+                    y = height - 50
+                    p.setFont("Helvetica", 10)
+                p.drawString(50, y, f"- {v.get('type', '')} ({v.get('severity', '')}): {v.get('description', '')[:75]}")
+                y -= 16
     else:
         p.drawString(50, y, "No results available.")
 
