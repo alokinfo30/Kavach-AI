@@ -77,8 +77,11 @@ class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
     
-    # Database - use SQLite for development
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///rai_ops_dev.db'
+    # Database - use PostgreSQL
+    _dev_db_url = os.environ.get('DATABASE_URL')
+    if _dev_db_url and _dev_db_url.startswith('postgres://'):
+        _dev_db_url = _dev_db_url.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = _dev_db_url or Config.SQLALCHEMY_DATABASE_URI
     
     # Security - relaxed for development
     WTF_CSRF_ENABLED = False
