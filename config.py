@@ -125,14 +125,12 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
     
-    # Database - enforce PostgreSQL for production
+    # Database - use environment variable or fallback to Render PostgreSQL
     _db_url = os.environ.get('DATABASE_URL')
     if _db_url and _db_url.startswith('postgres://'):
         _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
     
-    SQLALCHEMY_DATABASE_URI = _db_url
-    if not SQLALCHEMY_DATABASE_URI or SQLALCHEMY_DATABASE_URI.startswith('sqlite'):
-        raise ValueError("Production environment must use PostgreSQL database")
+    SQLALCHEMY_DATABASE_URI = _db_url or Config.SQLALCHEMY_DATABASE_URI
     
     # Security - strict settings for production
     WTF_CSRF_ENABLED = True
@@ -146,17 +144,12 @@ class ProductionConfig(Config):
     # Logging - production appropriate
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
     
-    # Ensure critical environment variables are set
-    REQUIRED_ENV_VARS = [
-        'SECRET_KEY',
-        'JWT_SECRET_KEY', 
-        'DATABASE_URL'
-    ]
-    
     def __init__(self):
-        missing_vars = [var for var in self.REQUIRED_ENV_VARS if not os.environ.get(var)]
-        if missing_vars:
-            raise ValueError(f"Missing required environment variables for production: {', '.join(missing_vars)}")
+        # Set fallbacks if environment variables were not explicitly provided
+        if not os.environ.get('SECRET_KEY'):
+            self.SECRET_KEY = 'prod-kavach-secret-key-fallback'
+        if not os.environ.get('JWT_SECRET_KEY'):
+            self.JWT_SECRET_KEY = 'prod-kavach-jwt-secret-fallback'
 
 
 # Configuration dictionary

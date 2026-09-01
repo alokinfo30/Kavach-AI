@@ -5,15 +5,16 @@ from flask_jwt_extended import JWTManager
 
 from .extensions import db
 
-# Import config - handle both development and production paths
+# Import config - handle both root and backend directory execution
 try:
-    from ..config import get_config
-except ImportError:
-    # Fallback for when running from backend directory directly
-    import sys
-    import os
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from config import get_config
+except ImportError:
+    try:
+        import sys
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from config import get_config
+    except Exception:
+        from .config import Config as get_config
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
