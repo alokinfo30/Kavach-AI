@@ -18,6 +18,7 @@ import TestComparison from './TestComparison';
 import AdminFeedback from './AdminFeedback';
 import Notifications from './Notifications';
 import ActivityLog from './ActivityLog';
+import PWAInstallBanner from './components/PWAInstallBanner';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
       <AuthProvider>
         <ThemeProvider defaultTheme="light" storageKey="kavach-theme">
           <Router>
+            <PWAInstallBanner />
             <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />
