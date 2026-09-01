@@ -5,9 +5,7 @@ services:
     dockerfilePath: ./Dockerfile
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: ai-governance-db
-          property: connectionString
+        value: "postgresql://kavach_ai_user:wLtE50W5WcVQVJLQ0yR8fABrKw956T0c@dpg-dabdsr61egvs73f2enj0-a/kavach_ai"
       - key: SECRET_KEY
         generateValue: true
       - key: JWT_SECRET_KEY
@@ -18,8 +16,3 @@ services:
         value: "true"
       - key: MONGO_URI
         value: "mongodb+srv://alokinfoproict_db_user:fzXfm0IBsudp0ZG1@cluster0.99rdhte.mongodb.net/?appName=Cluster0"
-
-databases:
-  - name: ai-governance-db
-    databaseName: aigovernance
-    user: alok1507

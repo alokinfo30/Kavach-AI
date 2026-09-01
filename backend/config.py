@@ -19,11 +19,7 @@ class Config:
             uri = uri.replace("postgres://", "postgresql://", 1)
         SQLALCHEMY_DATABASE_URI = uri
     else:
-        db_user = os.environ.get('POSTGRES_USER', 'user')
-        db_password = os.environ.get('POSTGRES_PASSWORD', 'password')
-        db_host = os.environ.get('DATABASE_HOST', 'localhost')
-        db_name = os.environ.get('POSTGRES_DB', 'aigovernance')
-        SQLALCHEMY_DATABASE_URI = f"postgresql://{db_user}:{db_password}@{db_host}:5432/{db_name}"
+        SQLALCHEMY_DATABASE_URI = "postgresql://kavach_ai_user:wLtE50W5WcVQVJLQ0yR8fABrKw956T0c@dpg-dabdsr61egvs73f2enj0-a.oregon-postgres.render.com/kavach_ai"
 
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
     SQLALCHEMY_TRACK_MODIFICATIONS = False

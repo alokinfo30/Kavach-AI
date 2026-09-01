@@ -15,7 +15,7 @@ class Config:
     _raw_db_uri = os.environ.get('DATABASE_URL')
     if _raw_db_uri and _raw_db_uri.startswith('postgres://'):
         _raw_db_uri = _raw_db_uri.replace('postgres://', 'postgresql://', 1)
-    SQLALCHEMY_DATABASE_URI = _raw_db_uri or 'sqlite:///rai_ops.db'
+    SQLALCHEMY_DATABASE_URI = _raw_db_uri or 'postgresql://kavach_ai_user:wLtE50W5WcVQVJLQ0yR8fABrKw956T0c@dpg-dabdsr61egvs73f2enj0-a.oregon-postgres.render.com/kavach_ai'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
