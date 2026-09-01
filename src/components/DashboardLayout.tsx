@@ -20,10 +20,12 @@ import {
   Sparkles,
   History,
   Download,
-  WifiOff
+  WifiOff,
+  HelpCircle
 } from 'lucide-react';
 import GlobalSearchModal from './GlobalSearchModal';
 import KeyboardShortcutsModal from './KeyboardShortcutsModal';
+import UserGuideModal from './UserGuideModal';
 import Breadcrumbs from './Breadcrumbs';
 import SessionExpiryToast from './SessionExpiryToast';
 import VoiceNavigation from './VoiceNavigation';
@@ -38,8 +40,24 @@ function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [userGuideOpen, setUserGuideOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [canInstallPwa, setCanInstallPwa] = useState(false);
+
+  // Auto-trigger User Guide Onboarding for newly registered users
+  useEffect(() => {
+    const isNewUser = localStorage.getItem('kavach_show_onboarding') === 'true';
+    const hasCompletedTour = localStorage.getItem('kavach_tour_completed') === 'true';
+
+    if (isNewUser || !hasCompletedTour) {
+      // Small timeout to let dashboard render before showing welcome modal
+      const timer = setTimeout(() => {
+        setUserGuideOpen(true);
+        localStorage.removeItem('kavach_show_onboarding');
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   // PWA & Network listeners
   useEffect(() => {
@@ -75,6 +93,15 @@ function DashboardLayout() {
         if (!isInput) {
           e.preventDefault();
           setShortcutsOpen((prev) => !prev);
+          return;
+        }
+      }
+
+      // Shift+G or Alt+G -> User Guide
+      if (e.key === 'G' && (e.shiftKey || e.altKey)) {
+        if (!isInput) {
+          e.preventDefault();
+          setUserGuideOpen((prev) => !prev);
           return;
         }
       }
@@ -176,6 +203,9 @@ function DashboardLayout() {
 
       {/* Keyboard Shortcuts Helper Modal (Shift + ?) */}
       <KeyboardShortcutsModal isOpen={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+
+      {/* Interactive User Guide & Onboarding Tour Modal */}
+      <UserGuideModal isOpen={userGuideOpen} onClose={() => setUserGuideOpen(false)} />
 
       {/* Token Expiration Warning Toast (60s countdown) */}
       <SessionExpiryToast />
@@ -282,6 +312,21 @@ function DashboardLayout() {
 
             <button
               type="button"
+              onClick={() => {
+                setSidebarOpen(false);
+                setUserGuideOpen(true);
+              }}
+              className="w-full flex items-center justify-between px-3 py-1.5 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-md font-semibold transition-colors"
+            >
+              <span className="flex items-center gap-1.5">
+                <BookOpen className="h-3.5 w-3.5" />
+                User Guide & Tour
+              </span>
+              <kbd className="text-[10px] font-mono text-indigo-500 font-semibold">Shift+G</kbd>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setShortcutsOpen(true)}
               className="w-full flex items-center justify-between px-3 py-1.5 text-xs text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors"
             >
@@ -374,6 +419,18 @@ function DashboardLayout() {
                 </button>
               </Tooltip>
             )}
+
+            <Tooltip content="Open Interactive User Guide & Feature Tour (Shift + G)">
+              <button
+                type="button"
+                onClick={() => setUserGuideOpen(true)}
+                title="User Guide & Feature Walkthrough (Shift+G)"
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg border border-indigo-200 dark:border-indigo-800 transition-colors cursor-pointer"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                <span>Guide</span>
+              </button>
+            </Tooltip>
 
             <Tooltip content="Open Keyboard Shortcuts Reference (Shift + ?)">
               <button

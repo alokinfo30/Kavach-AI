@@ -28,8 +28,10 @@ export default function Register() {
     try {
       if (register) {
         await register(formData.email, formData.password, formData.username, formData.company);
+        localStorage.setItem('kavach_show_onboarding', 'true');
         navigate('/dashboard', { replace: true });
       } else {
+        localStorage.setItem('kavach_show_onboarding', 'true');
         navigate('/login', { replace: true });
       }
     } catch (err: any) {
