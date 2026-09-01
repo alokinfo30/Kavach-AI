@@ -14,7 +14,7 @@ COPY public/ ./public/
 COPY index.html ./
 
 # Install frontend dependencies and build static assets
-RUN npm ci || npm install
+RUN npm install
 RUN npm run build || true
 
 # ==========================================
@@ -37,8 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python requirements
 COPY requirements.txt ./
-COPY backend/requirements.txt ./backend/
-RUN pip install --no-cache-dir -r requirements.txt -r backend/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend source code and scripts
 COPY . .
