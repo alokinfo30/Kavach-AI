@@ -1,4 +1,4 @@
-# RAI Ops Application
+# Kavach AI Application
 
 A comprehensive Risk Assessment and Intelligence Operations platform for AI systems.
 
