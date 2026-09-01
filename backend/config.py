@@ -27,6 +27,7 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MONGO_URI = os.getenv('MONGO_URI') or os.getenv('MONGODB_URI') or 'mongodb+srv://alokinfoproict_db_user:fzXfm0IBsudp0ZG1@cluster0.99rdhte.mongodb.net/?appName=Cluster0'
     
     # Security
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')

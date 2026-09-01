@@ -47,6 +47,17 @@ def create_redteam_test() -> tuple[Response, int]:
     db.session.add(log)
     db.session.commit()
 
+    try:
+        from .mongodb_service import log_telemetry_event
+        log_telemetry_event("CREATE_TEST", {
+            "user_id": user_id,
+            "test_id": test.id,
+            "test_type": data["test_type"],
+            "target_system": data["target_system"]
+        })
+    except Exception:
+        pass
+
     return jsonify({"message": "Test created", "test": test.to_dict()}), 201
 
 
@@ -68,6 +79,21 @@ def run_redteam_test(test_id: int) -> tuple[Response, int]:
     test.results = results
     test.completed_at = datetime.utcnow()
     db.session.commit()
+
+    try:
+        from .mongodb_service import save_ai_test_run
+        save_ai_test_run({
+            "sql_test_id": test.id,
+            "user_id": user_id,
+            "test_name": test.test_name,
+            "test_type": test.test_type,
+            "target_system": test.target_system,
+            "status": "completed",
+            "results": results,
+            "completed_at": test.completed_at
+        })
+    except Exception:
+        pass
 
     return jsonify({"message": "Test completed", "results": results})
 

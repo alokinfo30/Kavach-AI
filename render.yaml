@@ -16,6 +16,8 @@ services:
         value: false
       - key: PYTHONUNBUFFERED
         value: "true"
+      - key: MONGO_URI
+        value: "mongodb+srv://alokinfoproict_db_user:fzXfm0IBsudp0ZG1@cluster0.99rdhte.mongodb.net/?appName=Cluster0"
 
 databases:
   - name: ai-governance-db

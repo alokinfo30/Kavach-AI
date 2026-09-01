@@ -21,6 +21,7 @@ class Config:
         'pool_pre_ping': True,
         'pool_recycle': 300,
     }
+    MONGO_URI = os.environ.get('MONGO_URI') or os.environ.get('MONGODB_URI') or 'mongodb+srv://alokinfoproict_db_user:fzXfm0IBsudp0ZG1@cluster0.99rdhte.mongodb.net/?appName=Cluster0'
     
     # Security
     WTF_CSRF_ENABLED = True
