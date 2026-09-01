@@ -1,410 +1,190 @@
-# Kavach AI Application
+﻿# Kavach-AI: Enterprise Responsible AI (RAI) Operations & Security Platform
 
-A comprehensive Risk Assessment and Intelligence Operations platform for AI systems.
+[![License: MIT](https://img.shields.io/badge/License-MIT-indigo.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
+[![React](https://img.shields.io/badge/React-18-cyan.svg)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-purple.svg)](https://vitejs.dev/)
+[![Flask](https://img.shields.io/badge/Flask-3.0-green.svg)](https://flask.palletsprojects.com/)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-orange.svg)](https://kavachbot.netlify.app/)
 
-## Features
+> **Kavach-AI** is an all-in-one Enterprise Responsible AI (RAI) Operations, Security Testing, Model Drift Monitoring, and Regulatory Governance platform designed to safeguard LLMs, foundation models, and predictive ML systems across their entire lifecycle.
 
-- **User Authentication**: Secure JWT-based authentication with email verification
-- **AI Risk Assessment**: Comprehensive risk evaluation and monitoring
-- **Red Teaming**: Security testing and vulnerability assessment
-- **Knowledge Management**: AI model documentation and compliance tracking
-- **Real-time Monitoring**: Continuous system health and performance monitoring
-- **Reporting**: Detailed compliance and security reports
-- **Notifications**: Email alerts and system notifications
+---
 
-## Environment Setup
+## 🌟 Why Kavach-AI? (The Importance of RAI Ops)
+
+As enterprises rapidly deploy Large Language Models (LLMs) and Autonomous AI Agents into production, AI systems introduce severe new risk vectors:
+
+1. **Adversarial & Security Threats**: LLMs are vulnerable to *Prompt Injection*, *Jailbreaking*, *System Prompt Extraction*, and *Training Data / PII Leaks*. Without continuous red teaming, attackers can bypass safety guardrails or extract private corporate data.
+2. **Model Degradation & Silent Drift**: In production, input data distributions shift over time (*Data Drift*) and real-world relationships evolve (*Concept Drift*), causing hallucinations, inaccurate predictions, and silent system failures.
+3. **Strict Global AI Regulations**: Mandates such as the **EU AI Act**, **NIST AI Risk Management Framework (AI RMF 1.0)**, **ISO/IEC 42001**, and **OWASP LLM Top 10** require organizations to maintain auditable proof of safety testing, model inventories, risk tiering, and human oversight.
+
+**Kavach-AI bridges the gap between AI development and enterprise risk compliance**, giving security engineers, data scientists, and compliance officers a unified pane of glass to stress-test, monitor, govern, and audit AI deployments.
+
+---
+
+## 🚀 Key Features
+
+### 1. 🛡️ Adversarial AI Red Teaming & Attack Simulation
+- **Multi-Vector Threat Testing**: Stress-test models against Prompt Injection, Jailbreak Bypass, System Prompt Extraction, Hallucinations, Toxicity, and Training Data Leakage.
+- **Side-by-Side Test Comparison Matrix (`/red-team/compare`)**: Compare test runs across different models, prompt iterations, and safety guardrails to evaluate regression risks.
+- **Automated Scheduled Audits**: Configure recurring automated security scans (Hourly, Daily, Weekly) with customizable alert thresholds.
+- **Granular Test Audit Reports**: Generate and download individual test run audit reports in PDF format.
+
+### 2. 📊 Executive Dashboard & Risk Posture
+- **Composite AI Risk Score (0–100)**: Real-time risk metric synthesized from vulnerability severity, attack exposure, and compliance coverage.
+- **Live Database & Service Health Monitoring**: Real-time status tracker for PostgreSQL, MongoDB Atlas, and Redis connectivity.
+- **Vulnerability Triage Counters**: Real-time tracking of Critical, High, Medium, and Low severity issues across all registered models.
+
+### 3. 📈 Real-Time Model Monitoring & Drift Detection
+- **Statistical Drift Analysis**: Track Data Drift, Concept Drift, and Feature Distribution shifts over 7-day, 30-day, and 90-day timeframes.
+- **Interactive Telemetry Graphs (Recharts)**: P50, P95, and P99 response latencies, throughput (requests/sec), and token consumption.
+- **Automated Incident Alerting**: Trigger real-time anomaly alerts with configurable sensitivity thresholds.
+
+### 4. 📚 AI Governance & Safety Knowledge Base
+- **Central Model Inventory Registry**: Track model metadata, risk classifications, owners, training datasets, and maintainers.
+- **Regulatory Framework Mapping**: Map models directly against:
+  - **EU AI Act** (Transparency, High-Risk Assessment, Human Oversight)
+  - **NIST AI RMF** (Govern, Map, Measure, Manage)
+  - **OWASP Top 10 for LLMs & Generative AI**
+- **Interactive Knowledge Graph**: Visual node-link topology mapping relationships between models, vulnerability surfaces, datasets, and compliance requirements.
+
+### 5. 📑 Audit-Ready PDF & CSV Compliance Reports
+- **Executive & Technical Report Generation**: One-click generation of formal compliance audit reports using ReportLab.
+- **Email Dispatch**: Direct dispatch of compliance summaries to security and legal teams.
+- **Report History Archive**: Complete repository of past audit reports with instant re-download.
+
+### 6. 📝 Immutable Activity Log & SIEM Audit Trail
+- **End-to-End Traceability**: Captures user IDs, timestamps, affected resources, and client IP addresses.
+- **One-Click CSV Export**: Export complete activity history for ingestion into SIEM tools (Splunk, Datadog, Elastic).
+
+### 7. 🧭 Interactive User Guide & Onboarding Tour
+- **Automated New User Walkthrough**: 7-step guided tour launching automatically upon new user registration.
+- **Quick-Start Checklist**: Interactive progress checklist guiding users to run their first test, inspect drift, and generate compliance reports.
+- **Cheat Sheet Reference**: Always accessible via top navigation, sidebar, or pressing `Shift + G`.
+
+### 8. 📱 Progressive Web App (PWA) & Offline Capabilities
+- **Desktop & Mobile Installable**: Install Kavach-AI as a native desktop or mobile application.
+- **Service Worker Offline Caching**: Seamlessly caches static assets for offline operational resilience.
+- **PWA Install Banner**: Custom install prompt across login and dashboard screens.
+
+---
+
+## ⚡ Global Keyboard Shortcuts
+
+| Shortcut | Description | Destination |
+|:---|:---|:---|
+| `Ctrl + K` / `Cmd + K` | Global Quick Search & Command Palette | Search Across App |
+| `Shift + G` | Open Interactive User Guide & Tour | User Guide Modal |
+| `Shift + ?` | Open Keyboard Shortcuts Cheat Sheet | Shortcuts Modal |
+| `Ctrl + D` | Jump to Executive Dashboard | `/dashboard` |
+| `Alt + R` | Jump to Adversarial Red Team Lab | `/red-team` |
+| `Ctrl + M` | Jump to Real-Time Drift Monitoring | `/monitoring` |
+| `Ctrl + B` | Jump to Knowledge Base & Graph | `/knowledge` |
+| `Ctrl + P` | Jump to Compliance PDF Reports | `/reports` |
+
+---
+
+## 🛠️ Local Development & Quick Start
 
 ### Prerequisites
+- **Python 3.10+**
+- **Node.js 18+**
+- **PostgreSQL** or **SQLite** (local default)
+- **MongoDB Atlas Connection URI** (Optional for local telemetry)
 
-- Python 3.10+
-- Node.js 18+
-- PostgreSQL (for production)
-- Redis (for caching and rate limiting)
-
-### Development Environment
-
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd rai-ops
-   ```
-
-2. **Set up environment variables:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-3. **Start development environment:**
-   ```bash
-   python start_dev.py
-   ```
-   
-   This will:
-   - Install Python and Node.js dependencies
-   - Start the backend Flask server on http://localhost:5000
-   - Start the frontend Vite server on http://localhost:5173
-   - Set up development-specific configurations
-
-4. **Access the application:**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:5000
-   - API Documentation: http://localhost:5000/health
-
-### Production Environment
-
-1. **Set up environment variables:**
-   ```bash
-   cp .env.example .env.production
-   # Edit .env.production with production values
-   ```
-
-2. **Using Docker (Recommended):**
-   ```bash
-   # Build and start all services
-   docker-compose up -d
-   
-   # View logs
-   docker-compose logs -f
-   
-   # Stop services
-   docker-compose down
-   ```
-
-3. **Manual deployment:**
-   ```bash
-   # Install dependencies
-   python -m pip install -r backend/requirements.txt
-   
-   # Set environment variables
-   export FLASK_ENV=production
-   export DATABASE_URL=postgresql://user:password@localhost/rai_ops_prod
-   
-   # Run migrations
-   python backend/migrations.py
-   
-   # Start production server
-   python start_prod.py
-   ```
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `SECRET_KEY` | Flask secret key | dev-secret-key | Yes (Prod) |
-| `JWT_SECRET_KEY` | JWT signing key | dev-jwt-secret | Yes (Prod) |
-| `DATABASE_URL` | Database connection string | sqlite:///rai_ops.db | No |
-| `MAIL_USERNAME` | SMTP username | - | Yes (Prod) |
-| `MAIL_PASSWORD` | SMTP password | - | Yes (Prod) |
-| `OPENAI_API_KEY` | OpenAI API key | - | Yes |
-| `REDIS_URL` | Redis connection string | redis://localhost:6379/0 | No |
-
-### Development vs Production
-
-#### Development Configuration
-- SQLite database
-- Debug mode enabled
-- Relaxed CORS settings
-- In-memory rate limiting
-- Debug logging
-- Email suppression
-
-#### Production Configuration
-- PostgreSQL database (required)
-- Debug mode disabled
-- Strict CORS settings
-- Redis-based rate limiting
-- Info-level logging
-- Full email functionality
-
-## Docker Setup
-
-### Development with Docker
-
+### 1. Clone Repository
 ```bash
-# Start development environment
-docker-compose -f docker-compose.dev.yml up -d
-
-# View logs
-docker-compose -f docker-compose.dev.yml logs -f
+git clone https://github.com/alokinfo30/Kavach-AI.git
+cd Kavach-AI
 ```
 
-### Production with Docker
-Activating the Virtual Environment
-The source command is for Linux/Git Bash. In a Windows Command Prompt, you call the script directly.
+### 2. Configure Environment Variables
+Create a `.env` file in the project root:
+```env
+FLASK_ENV=development
+SECRET_KEY=your-secure-secret-key
+JWT_SECRET_KEY=your-secure-jwt-key
+DATABASE_URL=sqlite:///rai_ops_dev.db
+MONGO_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/?appName=Cluster0
+OPENAI_API_KEY=sk-... # Optional (Simulated mode active if not provided)
+VITE_API_URL=http://localhost:5000
+```
 
-The Fix:
-
-DOS
-venv\Scripts\activate
-Once activated, your prompt should start with (venv).
-
-Generating Secret Keys (Python Syntax)
-When you are inside the Python interpreter (the >>> prompt), you have to run commands one line at a time. You don't type the word "python" again.
-
-The Fix:
-
-Type python to enter the shell.
-
-Run these three separate lines:
-
-Python
-import secrets
-print(secrets.token_hex(32))
-exit()
-Copy that long string for your .env file
-
-Build and run with Docker:
-
-bash
-docker-compose up --build
-Access the application:
-
-Web UI: http://localhost
-
-API: http://localhost/api
-
-Health check: http://localhost/health
-
-Local Development
-Set up Python virtual environment:
-
-bash
+### 3. Run Backend (Flask)
+```bash
+# Set up virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r backend/requirements.txt
-Set up database:
 
-bash
-docker-compose up postgres redis
-Run backend:
-
-bash
-cd backend
-python app.py
-Serve frontend:
-
-bash
-# Using Python HTTP server
-cd frontend
-python -m http.server 8000
-
-
-**Security Considerations**
-Environment Variables: Never commit .env file
-
-```bash
-# Start production environment
-docker-compose up -d
-
-# Monitor services
-docker-compose ps
-
-# View logs
-docker-compose logs -f
+# Start backend server
+python start_dev.py
 ```
 
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/refresh` - Token refresh
-- `POST /api/auth/forgot-password` - Password reset request
-- `POST /api/auth/reset-password` - Password reset
-
-### User Management
-- `PUT /api/auth/profile` - Update profile
-
-### System Health
-- `GET /health` - Health check
-
-## Frontend Development
-
-The frontend is built with React and Vite. To develop the frontend separately:
-
+### 4. Run Frontend (React + Vite)
 ```bash
-cd backend
 npm install
 npm run dev
 ```
 
-### Environment Variables for Frontend
+The frontend will be available at `http://localhost:5173` and the backend API at `http://localhost:5000`.
 
-Create a `.env` file in the `backend` directory:
+---
 
-```env
-VITE_API_URL=http://localhost:5000
-VITE_ENVIRONMENT=development
+## 🚢 Production Deployment
+
+### 1. Backend (Render / Docker)
+The application includes a production-ready multi-stage `Dockerfile`:
+- **Builder Stage**: `node:20-slim` builds frontend assets.
+- **Production Stage**: `python:3.11-slim` runs Gunicorn with multi-threaded workers.
+
+```bash
+docker build -t kavach-ai .
+docker run -p 8000:8000 --env-file .env kavach-ai
 ```
 
-## Security Features
+### 2. Frontend (Netlify)
+- **Build Command**: `npm run build`
+- **Publish Directory**: `dist`
+- **Environment Variable**: `VITE_API_URL=https://<your-render-backend-url>.onrender.com`
 
-- JWT-based authentication
-- Rate limiting on authentication endpoints
-- CSRF protection (disabled in development)
-- Secure session cookies (production only)
-- Input validation and sanitization
-- HTTPS enforcement (production)
+---
 
-## Monitoring and Logging
+## 📋 REST API Endpoints Overview
 
-### Development
-- Console logging with debug level
-- File logging to `logs/dev_server.log`
+### Authentication & Users
+- `POST /api/auth/register` — Create new user account
+- `POST /api/auth/login` — Authenticate user and receive JWT access token
+- `POST /api/auth/refresh` — Refresh expired access token
+- `GET /api/auth/profile` — Fetch current user profile
 
-### Production
-- Structured logging to `logs/prod_server.log`
-- Gunicorn access and error logs
-- Health check endpoints
-- Docker health checks
+### Red Teaming & Testing
+- `POST /api/redteam/test` — Execute single adversarial test
+- `GET /api/redteam/history` — Retrieve test execution history
+- `GET /api/redteam/scheduled` — List automated scheduled tests
+- `POST /api/redteam/schedule` — Create new scheduled recurring test
+- `POST /api/redteam/scheduled/<id>/run` — Trigger immediate test execution
 
-## Troubleshooting
+### Monitoring & Drift
+- `GET /api/monitoring/drift` — Retrieve data and concept drift metrics
+- `GET /api/monitoring/alerts` — Fetch active security & threshold alerts
+- `POST /api/monitoring/alerts/resolve` — Acknowledge/resolve alerts
 
-### Common Issues
+### Governance & Knowledge
+- `GET /api/knowledge/models` — List registered AI models and risk tiers
+- `GET /api/knowledge/graph` — Retrieve safety knowledge graph topology
+- `GET /api/knowledge/compliance` — Fetch compliance framework checklist
 
-1. **Port conflicts:**
-   - Backend default: 5000
-   - Frontend default: 5173
-   - Change ports in configuration if needed
+### Compliance & Reports
+- `GET /api/reports/list` — List generated compliance reports
+- `POST /api/reports/generate` — Generate new audit PDF report
+- `GET /api/reports/<id>/download` — Download report PDF
+- `GET /health` — Diagnostic health check (PostgreSQL, MongoDB, Redis)
 
-2. **Database issues:**
-   - Ensure PostgreSQL is running (production)
-   - Check database permissions
-   - Run migrations: `python backend/migrations.py`
+---
 
-3. **Dependency issues:**
-   - Clear Python cache: `pip cache purge`
-   - Clear Node.js cache: `npm cache clean --force`
-   - Reinstall dependencies
-
-4. **Environment variables:**
-   - Check `.env` file syntax
-   - Ensure required variables are set
-   - Restart services after changes
-
-### Logs
-
-- Development: `logs/dev_server.log`
-- Production: `logs/prod_server.log`
-- Docker: `docker-compose logs`
-
-## Deployment
-
-### Production Deployment Checklist
-
-- [ ] Set strong `SECRET_KEY` and `JWT_SECRET_KEY`
-- [ ] Configure PostgreSQL database
-- [ ] Set up Redis instance
-- [ ] Configure SMTP for email
-- [ ] Set up SSL/TLS certificates
-- [ ] Configure firewall and security groups
-- [ ] Set up monitoring and alerting
-- [ ] Configure backups
-- [ ] Test disaster recovery
-
-### Scaling
-
-- Use multiple Gunicorn workers
-- Implement database connection pooling
-- Add Redis clustering for high availability
-- Use load balancers for multiple instances
-- Implement CDN for static assets
-
-## Advanced Platform Features & Capabilities
-
-### 1. Real-Time Telemetry & Security Scan Duration Visualization (Recharts)
-- Live API response latency metrics (P50, P95, P99 percentile graphs).
-- Security scan duration and throughput tracking.
-- Interactive multi-metric chart with live jitter simulation, historical playback, and error rate telemetry.
-
-### 2. Global Command Palette & Keyboard Shortcuts Navigation
-Fast keyboard-driven workflows for enterprise security operations:
-- `Ctrl + K` / `Cmd + K`: Open Global Search & Command Engine
-- `Ctrl + D` / `Cmd + D`: Jump to Governance Overview Dashboard
-- `Alt + R` / `Ctrl + R`: Jump to Red Team Security Lab
-- `Ctrl + M` / `Cmd + M`: Jump to Model Drift Monitoring
-- `Ctrl + B` / `Cmd + B`: Jump to Knowledge Base & Graph
-- `Ctrl + P` / `Cmd + P`: Jump to Compliance Reports & Downloads
-- `?` or `Shift + /`: Open Keyboard Shortcuts Cheat Sheet
-
-### 3. Scheduled Scans (Recurring Security Audits)
-Automate continuous adversarial red teaming on AI models:
-- Configure custom recurrence frequencies: Hourly, Every 6 Hours, Daily at Midnight, Weekly on Sunday.
-- Automated score threshold alerts with instant incident notification triggers.
-- Toggle active/paused status and trigger immediate manual executions with "Run Now".
-
-### 4. Cross-Module Global Search Bar
-- Header search bar allowing real-time keyword filtering across Red Team test results, Model Drift metrics, Knowledge Base articles, and navigation endpoints.
-- Debounced live search with category pills and keyboard navigation.
-
-### 5. Multi-Format Audit Reports (Download CSV & Download PDF)
-- Executive Compliance & ISO/IEC 42001 / NIST AI RMF Summary: Download in structured CSV or formatted PDF.
-- Red Team Adversarial Attack Findings: Granular payload, severity, and remediation export.
-- Model Drift & Degradation Audit: Statistical baseline comparison and anomaly log export.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Update documentation
-6. Submit a pull request
-
-## License
-
-[Add your license information here]
-
-## Support
-
-For support and questions:
-- Create an issue in the repository
-- Contact the development team
-- Check the documentation
-Check if PostgreSQL is running: docker-compose ps
-
-Verify connection string in .env
-
-Port conflicts:
-
-Change ports in docker-compose.yml
-
-Check running services: netstat -tulpn
-
-Permission denied for uploads:
-
-bash
-chmod 777 backend/uploads
-Contributing
-Fork the repository
-
-Create feature branch
-
-Commit changes
-
-Roadmap
-Add more AI attack simulations
-
-Implement real-time monitoring dashboard
-
-Add support for more ML frameworks
-
-Create mobile app
-
-Add compliance reporting
-
-Implement advanced analytics
-
-Acknowledgments
-OpenAI for API access
-
-Flask community
-
-Docker community
-
-Push to branch
-
-Create Pull Request
+## 📄 License
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
