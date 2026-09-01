@@ -1,6 +1,6 @@
 import logging
 from flask import Flask
-from sqlalchemy import text
+from sqlalchemy import text, inspect
 from .extensions import db
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ def run_migrations(app: Flask):
     This is a lightweight alternative to Alembic for this specific project scope.
     """
     with app.app_context():
-        inspector = db.inspect(db.engine)
+        inspector = inspect(db.engine)
         
         # 1. Update 'ai_tests' table
         if inspector.has_table("ai_tests"):

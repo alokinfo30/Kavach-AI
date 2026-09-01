@@ -12,7 +12,10 @@ class Config:
     ENV = os.environ.get('ENV', 'development')
     
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///rai_ops.db'
+    _raw_db_uri = os.environ.get('DATABASE_URL')
+    if _raw_db_uri and _raw_db_uri.startswith('postgres://'):
+        _raw_db_uri = _raw_db_uri.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = _raw_db_uri or 'sqlite:///rai_ops.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
@@ -122,7 +125,11 @@ class ProductionConfig(Config):
     TESTING = False
     
     # Database - enforce PostgreSQL for production
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    _db_url = os.environ.get('DATABASE_URL')
+    if _db_url and _db_url.startswith('postgres://'):
+        _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
+    
+    SQLALCHEMY_DATABASE_URI = _db_url
     if not SQLALCHEMY_DATABASE_URI or SQLALCHEMY_DATABASE_URI.startswith('sqlite'):
         raise ValueError("Production environment must use PostgreSQL database")
     
@@ -138,14 +145,11 @@ class ProductionConfig(Config):
     # Logging - production appropriate
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
     
-    # Ensure required environment variables are set
+    # Ensure critical environment variables are set
     REQUIRED_ENV_VARS = [
         'SECRET_KEY',
         'JWT_SECRET_KEY', 
-        'DATABASE_URL',
-        'MAIL_USERNAME',
-        'MAIL_PASSWORD',
-        'OPENAI_API_KEY'
+        'DATABASE_URL'
     ]
     
     def __init__(self):

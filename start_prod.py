@@ -31,10 +31,7 @@ def check_production_environment():
     required_env_vars = [
         'SECRET_KEY',
         'JWT_SECRET_KEY',
-        'DATABASE_URL',
-        'MAIL_USERNAME',
-        'MAIL_PASSWORD',
-        'OPENAI_API_KEY'
+        'DATABASE_URL'
     ]
     
     missing_vars = []
@@ -47,12 +44,16 @@ def check_production_environment():
         logger.error("Please set these variables in your .env file or environment.")
         return False
     
-    # Check if database URL is PostgreSQL (required for production)
+    # Check optional environment variables
+    optional_vars = ['MAIL_USERNAME', 'MAIL_PASSWORD', 'OPENAI_API_KEY']
+    for var in optional_vars:
+        if not os.environ.get(var):
+            logger.warning(f"Optional environment variable '{var}' is not set. Related features may be limited.")
+    
+    # Check if database URL is PostgreSQL
     db_url = os.environ.get('DATABASE_URL', '')
-    if not db_url.startswith('postgresql'):
-        logger.error("Production environment must use PostgreSQL database")
-        logger.error(f"Current DATABASE_URL: {db_url}")
-        return False
+    if not (db_url.startswith('postgresql') or db_url.startswith('postgres')):
+        logger.warning(f"DATABASE_URL does not start with postgresql/postgres: {db_url}")
     
     # Check if backend directory exists
     if not Path("backend").exists():
@@ -109,23 +110,23 @@ def start_production_server():
         'LOG_LEVEL': 'INFO'
     })
     
+    port = os.environ.get('PORT', '5000')
+    num_workers = min(os.cpu_count() * 2 + 1 if os.cpu_count() else 2, 4)
+    
     # Gunicorn configuration
     gunicorn_cmd = [
         'gunicorn',
-        '--bind', '0.0.0.0:5000',
-        '--workers', str(os.cpu_count() * 2 + 1),
-        '--worker-class', 'gevent',
-        '--worker-connections', '1000',
-        '--max-requests', '1000',
-        '--max-requests-jitter', '50',
-        '--timeout', '30',
+        '--bind', f'0.0.0.0:{port}',
+        '--workers', str(num_workers),
+        '--threads', '2',
+        '--timeout', '60',
         '--keep-alive', '2',
         '--log-level', 'info',
         '--access-logfile', 'logs/gunicorn_access.log',
         '--error-logfile', 'logs/gunicorn_error.log',
         '--capture-output',
         '--enable-stdio-inheritance',
-        'backend.app:app'
+        'backend.wsgi:app'
     ]
     
     logger.info(f"Starting Gunicorn with command: {' '.join(gunicorn_cmd)}")
